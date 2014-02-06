@@ -1,0 +1,510 @@
+def checkUid(uid){
+	v1 = g.idx("uid")[[uid:uid]];
+	if(!v1)
+		return "missed";
+	return "found";
+}
+
+//=========================== START add/remove connections, school, company ====================
+def addE(uid1, uid2, distance, direct, calculate, deleted, changed, type){
+	v1 = g.V.has('uid',uid1).next();
+	v2 = g.V.has('uid',uid2).next();
+	g.addEdge(v1, v2, type, [distance:distance, direct:direct, calculate:calculate, deleted:deleted, changed:changed]);	
+}
+
+def addEV(uid1, uid2, distance, direct, calculate, deleted, changed, type){
+	v1 = g.V.has('uid',uid1);
+	if(!v1){
+		v1 = g.addVertex([uid:uid1]);
+	} else {
+		v1 = v1.next();
+	}
+	g.idx("uid").put("uid", uid1, v1);
+
+	v2 = g.V.has('uid',uid2);
+	if(!v2){
+		v2 = g.addVertex([uid:uid2]);
+	} else {
+		v2 = v2.next();
+	}
+	g.idx("uid").put("uid", uid2, v2);
+
+	ed = g.addEdge(v1, v2, type, [distance:distance, direct:direct, calculate:calculate, deleted:deleted, changed:changed]);	
+}
+
+def addEVschool(uid, school_tid, distance, direct, calculate, deleted, changed, type, fromyear, toyear){
+	v1 = g.idx("uid")[[uid:uid]];
+	if(!v1){
+		v1 = g.addVertex([uid:uid]);
+	} else {
+		v1 = v1.next();
+	}
+	g.idx("uid").put("uid", uid, v1);
+
+	v2 = g.idx("school_tid")[[school_tid:school_tid]];
+	if(!v2){
+		v2 = g.addVertex([school_tid:school_tid]);
+	} else {
+		v2 = v2.next();
+	}
+	g.idx("school_tid").put("school_tid", school_tid, v2);
+
+	ed = g.addEdge(v1, v2, type, [distance:distance, direct:direct, calculate:calculate, deleted:deleted, changed:changed, fromyear:fromyear, toyear:toyear]);
+}
+
+def addEVcompany(uid, company_tid, distance, direct, calculate, deleted, changed, type, periodfrom, periodto, current_work){
+	v1 = g.idx("uid")[[uid:uid]];
+	if(!v1){
+		v1 = g.addVertex([uid:uid]);
+	} else {
+		v1 = v1.next();
+	}
+	g.idx("uid").put("uid", uid, v1);
+
+	v2 = g.idx("company_tid")[[company_tid:company_tid]];
+	if(!v2){
+		v2 = g.addVertex([company_tid:company_tid]);
+	} else {
+		v2 = v2.next();
+	}
+	g.idx("company_tid").put("company_tid", company_tid, v2);
+
+	if(current_work == 0){
+		ed = g.addEdge(v1, v2, type, [distance:distance, direct:direct, calculate:calculate, deleted:deleted, changed:changed, periodfrom:periodfrom, periodto:periodto, current_work:current_work]);
+	} else {
+		ed = g.addEdge(v1, v2, type, [distance:distance, direct:direct, calculate:calculate, deleted:deleted, changed:changed, periodfrom:periodfrom, periodto:221845392000, current_work:current_work]);
+	}	
+}
+
+//Property's names must contain contant letter only (no number, special character).
+def addEVindustry(uid, industry_tid, distance, direct, calculate, deleted, changed, type, periodfrom, periodto){
+	v1 = g.idx("uid")[[uid:uid]];
+	if(!v1){
+		v1 = g.addVertex([uid:uid]);
+	} else {
+		v1 = v1.next();
+	}
+	g.idx("uid").put("uid", uid, v1);
+
+	v2 = g.idx("industry_tid")[[industry_tid:industry_tid]];
+	if(!v2){
+		v2 = g.addVertex([industry_tid:industry_tid]);
+	} else {
+		v2 = v2.next();
+	}
+	g.idx("industry_tid").put("industry_tid", industry_tid, v2);
+
+	ed = g.addEdge(v1, v2, type, [distance:distance, direct:direct, calculate:calculate, deleted:deleted, changed:changed, periodfrom:periodfrom, periodto:periodto]);	
+}
+
+def addEVcountry(uid, country_tid, distance, direct, calculate, deleted, changed, type){
+	v1 = g.idx("uid")[[uid:uid]];
+	if(!v1){
+		v1 = g.addVertex([uid:uid]);
+	} else {
+		v1 = v1.next();
+	}
+	g.idx("uid").put("uid", uid, v1);
+
+	v2 = g.idx("country_tid")[[country_tid:country_tid]];
+	if(!v2){
+		v2 = g.addVertex([country_tid:country_tid]);
+	} else {
+		v2 = v2.next();
+	}
+	g.idx("country_tid").put("country_tid", country_tid, v2);
+
+	ed = g.addEdge(v1, v2, type, [distance:distance, direct:direct, calculate:calculate, deleted:deleted, changed:changed]);
+}
+
+def addEVcity(uid, city_tid, distance, direct, calculate, deleted, changed, type){
+	v1 = g.idx("uid")[[uid:uid]];
+	if(!v1){
+		v1 = g.addVertex([uid:uid]);
+	} else {
+		v1 = v1.next();
+	}
+	g.idx("uid").put("uid", uid, v1);
+
+	v2 = g.idx("city_tid")[[city_tid:city_tid]];
+	if(!v2){
+		v2 = g.addVertex([city_tid:city_tid]);
+	} else {
+		v2 = v2.next();
+	}
+	g.idx("city_tid").put("city_tid", city_tid, v2);
+
+	ed = g.addEdge(v1, v2, type, [distance:distance, direct:direct, calculate:calculate, deleted:deleted, changed:changed]);
+}
+
+def addEVdegree(uid, degree_tid, distance, direct, calculate, deleted, changed, type){
+	v1 = g.idx("uid")[[uid:uid]];
+	if(!v1){
+		v1 = g.addVertex([uid:uid]);
+	} else {
+		v1 = v1.next();
+	}
+	g.idx("uid").put("uid", uid, v1);
+
+	v2 = g.idx("degree_tid")[[degree_tid:degree_tid]];
+	if(!v2){
+		v2 = g.addVertex([degree_tid:degree_tid]);
+	} else {
+		v2 = v2.next();
+	}
+	g.idx("degree_tid").put("degree_tid", degree_tid, v2);
+
+	ed = g.addEdge(v1, v2, type, [distance:distance, direct:direct, calculate:calculate, deleted:deleted, changed:changed]);
+}
+
+
+def removeE(uid1, uid2, type, direct){
+	if(direct == 2) {
+		g.idx("uid")[[uid:uid1]].bothE(type).as('x').bothV.has('uid',uid2).back('x').remove();
+	} else {
+		g.idx("uid")[[uid:uid1]].outE(type).as('x').inV.has('uid',uid2).back('x').remove();
+	}
+}
+//=========================== END add/remove connections, school, company ====================
+
+def is1st(uid1, uid2, type, direct){
+	if(direct == 2) {
+		if(g.idx("uid")[[uid:uid1]].both(type).has('uid',uid2))
+			return true;
+	} else {
+		if(g.idx("uid")[[uid:uid1]].out(type).has('uid',uid2))
+			return true;
+	}
+	return false;
+}
+
+//1st-connection is same with it.loops=2
+def getShortestDistance(uid1, uid2, type, direct){
+	v1 = g.idx("uid")[[uid:uid1]];
+	path = null;
+	if(direct == 2) {
+		path = v1.both.loop(1){it.loops<2}{it.object.uid==uid2}.path;
+	} else {
+		path = v1.out.loop(1){it.loops<2}{it.object.uid==uid2}.path;
+	}
+	if(path){
+		return 1;
+	}
+
+	v1 = g.idx("uid")[[uid:uid1]];
+	path = null;
+	if(direct == 2) {
+		m=[];		n=[];
+		g.idx("uid")[[uid:uid1]].both(type).uid.fill(m);
+		g.idx("uid")[[uid:uid2]].both(type).uid.fill(n);
+		path = m.intersect(n)._()[0..2];
+	} else {
+		m=[];		n=[];
+		g.idx("uid")[[uid:uid1]].out(type).uid.fill(m);
+		g.idx("uid")[[uid:uid2]].out(type).uid.fill(n);
+		path = m.intersect(n)._()[0..2];
+	}
+	if(path){
+		return 2;
+	}
+
+	v1 = g.idx("uid")[[uid:uid1]];
+	path = null;
+	if(direct == 2) {
+		m=[];
+		n=[];
+		g.idx("uid")[[uid:uid1]].both(type).uid.fill(m);
+		g.idx("uid")[[uid:uid2]].as('x').both(type).as('y').both(type).except('x').except('y').dedup.uid.fill(n);
+		path = m.intersect(n)._()[0..2];
+	} else {
+		m=[];
+		n=[];
+		g.idx("uid")[[uid:uid1]].out(type).uid.fill(m);
+		g.idx("uid")[[uid:uid2]].as('x').in(type).as('y').in(type).except('x').except('y').dedup.uid.fill(n);
+		path = m.intersect(n)._()[0..2];
+	}
+	if(path){
+		return 3;
+	}
+
+	return 4;
+}
+
+// working with 1st connections
+def get1stConnections(uid, type, direct, limit){
+	limit--;
+
+	if(limit == -1) {
+		if(direct == 2) {
+			return g.idx("uid")[[uid:uid]].both(type).uid;
+		} else {
+			return g.idx("uid")[[uid:uid]].out(type).uid;
+		}
+	} else {
+		if(direct == 2) {
+			return g.idx("uid")[[uid:uid]].both(type).uid[0..limit];
+		} else {
+			return g.idx("uid")[[uid:uid]].out(type).uid[0..limit];
+		}
+	}
+}
+def count1stConnections(uid, type, direct){
+	if(direct == 2) {
+		return g.idx("uid")[[uid:uid]].both(type).count();
+	} else {
+		return g.idx("uid")[[uid:uid]].out(type).count();
+	}
+}
+
+// working with 2nd connections
+def get2ndConnections(uid, type, direct, limit){
+	limit--;
+
+	if(limit == -1){
+		if(direct == 2) {
+			return g.idx("uid")[[uid:uid]].as('x').both(type).as('y').both(type).except('x').except('y').dedup.uid;
+		} else {
+			return g.idx("uid")[[uid:uid]].as('x').out(type).as('y').out(type).except('x').except('y').dedup.uid;
+		}
+	} else {
+		if(direct == 2) {
+			return g.idx("uid")[[uid:uid]].as('x').both(type).as('y').both(type).except('x').except('y').dedup.uid[0..limit];
+		} else {
+			return g.idx("uid")[[uid:uid]].as('x').out(type).as('y').out(type).except('x').except('y').dedup.uid[0..limit];
+		}
+	}
+}
+def count2ndConnections(uid, type, direct){
+	if(direct == 2) {
+		return g.idx("uid")[[uid:uid]].as('x').both(type).as('y').both(type).except('x').except('y').dedup.count();
+	} else {
+		return g.idx("uid")[[uid:uid]].as('x').out(type).as('y').out(type).except('x').except('y').dedup.count();
+	}
+}
+
+// working with 3rd connections
+def get3rdConnections(uid, type, direct, limit){
+	limit--;
+
+	if(limit == -1){
+		if(direct == 2) {
+			return g.idx("uid")[[uid:uid]].as('x').both(type).as('y').both(type).except('x').dedup.as('z').both(type).dedup.except('x').except('y').except('z').dedup.uid;
+		} else {
+			return g.idx("uid")[[uid:uid]].as('x').out(type).as('y').out(type).except('x').dedup.as('z').out(type).dedup.except('x').except('y').except('z').dedup.uid;
+		}
+	} else {
+		if(direct == 2) {
+			return g.idx("uid")[[uid:uid]].as('x').both(type).as('y').both(type).except('x').dedup.as('z').both(type).dedup.except('x').except('y').except('z').dedup.uid[0..limit];
+		} else {
+			return g.idx("uid")[[uid:uid]].as('x').out(type).as('y').out(type).except('x').dedup.as('z').out(type).dedup.except('x').except('y').except('z').dedup.uid[0..limit];
+		}
+	}	
+}
+
+def count3rdConnections(uid, type, direct){
+	if(direct == 2) {
+		return g.idx("uid")[[uid:uid]].as('x').both(type).as('y').both(type).except('x').dedup.as('z').both(type).dedup.except('x').except('y').except('z').dedup.count();
+	} else {
+		return g.idx("uid")[[uid:uid]].as('x').out(type).as('y').out(type).except('x').dedup.as('z').out(type).dedup.except('x').except('y').except('z').dedup.count();
+	}
+}
+
+//working with shared connections
+def getShared1stConnections(uid1, uid2, type, direct, limit){
+	limit--;
+
+	if(limit == -1){
+		if(direct == 2) {
+			m=[];
+			n=[];
+			g.idx("uid")[[uid:uid1]].both(type).uid.fill(m);
+			g.idx("uid")[[uid:uid2]].both(type).uid.fill(n);
+
+			return m.intersect(n);
+		} else {
+			m=[];
+			n=[];
+			g.idx("uid")[[uid:uid1]].out(type).uid.fill(m);
+			g.idx("uid")[[uid:uid2]].out(type).uid.fill(n);
+
+			return m.intersect(n);
+		}
+	} else {
+		if(direct == 2) {
+			m=[];
+			n=[];
+			g.idx("uid")[[uid:uid1]].both(type).uid.fill(m);
+			g.idx("uid")[[uid:uid2]].both(type).uid.fill(n);
+
+			return m.intersect(n)._()[0..limit];
+		} else {
+			m=[];
+			n=[];
+			g.idx("uid")[[uid:uid1]].out(type).uid.fill(m);
+			g.idx("uid")[[uid:uid2]].out(type).uid.fill(n);
+
+			return m.intersect(n)._()[0..limit];
+		}
+	}
+}
+
+def get1stA_2ndBConnections(uid1, uid2, type, direct, limit){
+	limit--;
+
+	if(limit == -1){
+		if(direct == 2) {
+			m=[];
+			n=[];
+			g.idx("uid")[[uid:uid1]].both(type).uid.fill(m);
+			g.idx("uid")[[uid:uid2]].as('x').both(type).as('y').both(type).except('x').except('y').dedup.uid.fill(n);
+
+			return m.intersect(n);
+		} else {
+			m=[];
+			n=[];
+			g.idx("uid")[[uid:uid1]].out(type).uid.fill(m);
+			g.idx("uid")[[uid:uid2]].as('x').in(type).as('y').in(type).except('x').except('y').dedup.uid.fill(n);
+
+			return m.intersect(n);
+		}
+	} else {
+		if(direct == 2) {
+			m=[];
+			n=[];
+			g.idx("uid")[[uid:uid1]].both(type).uid.fill(m);
+			g.idx("uid")[[uid:uid2]].as('x').both(type).as('y').both(type).except('x').except('y').dedup.uid.fill(n);
+
+			return m.intersect(n)._()[0..limit];
+		} else {
+			m=[];
+			n=[];
+			g.idx("uid")[[uid:uid1]].out(type).uid.fill(m);
+			g.idx("uid")[[uid:uid2]].as('x').in(type).as('y').in(type).except('x').except('y').dedup.uid.fill(n);
+
+			return m.intersect(n)._()[0..limit];
+		}
+	}
+}
+
+
+//http://localhost:8182/graphs/newdb/tp/gremlin?script=getConnectionsInCompapy(1,35,1,10)&load=[anphabe]
+//http://localhost:8182/graphs/networkdb/tp/gremlin?script=getConnectionsInCompapy(2003,17007,2,10000)&load=[anphabe]
+def getConnectionsInCompapy(uid, company_tid, direct, limit){
+	limit--;
+	m=[];
+	cnn=[];
+	g.idx("company_tid")[[company_tid:company_tid]].in('works').uid.fill(m);
+	if(direct == 2) {
+		g.idx("uid")[[uid:uid]].both('knows').uid.fill(cnn);
+		g.idx("uid")[[uid:uid]].as('x').both('knows').as('y').both('knows').except('x').except('y').dedup.uid.fill(cnn);
+	} else {
+		g.idx("uid")[[uid:uid]].out('knows').uid.fill(cnn);
+		g.idx("uid")[[uid:uid]].as('x').out('knows').as('y').out('knows').except('x').except('y').dedup.uid.fill(cnn);
+	}
+
+	if(limit == -1){
+		return m.intersect(cnn);
+	} else {
+		return m.intersect(cnn)._()[0..limit];
+	}
+}
+
+//http://localhost:8182/graphs/newdb/tp/gremlin?script=getExpertiseCollaboration(20,2)&load=[anphabe]
+//http://localhost:8182/graphs/networkdb/tp/gremlin?script=getExpertiseCollaboration(17007,1000)&load=[anphabe]
+def getExpertiseCollaboration(company_tid, limit){
+	limit--;
+	if(limit == -1){
+		g.idx("company_tid")[[company_tid:company_tid]].in('works').out('takes').industry_tid.groupCount.cap.orderMap(T.decr);
+	} else {
+		g.idx("company_tid")[[company_tid:company_tid]].in('works').out('takes').industry_tid.groupCount.cap.orderMap(T.decr)[0..limit];
+	}
+}
+
+//http://localhost:8182/graphs/newdb/tp/gremlin?script=getSchoolCollaboration(20,10)&load=[anphabe]
+//http://localhost:8182/graphs/networkdb/tp/gremlin?script=getSchoolCollaboration(17007,1000)&load=[anphabe]
+def getSchoolCollaboration(company_tid, limit){
+	limit--;
+	if(limit == -1){
+		g.idx("company_tid")[[company_tid:company_tid]].in('works').out('learns').school_tid.groupCount.cap.orderMap(T.decr);
+	} else {
+		g.idx("company_tid")[[company_tid:company_tid]].in('works').out('learns').school_tid.groupCount.cap.orderMap(T.decr)[0..limit];
+	}
+}
+
+//http://localhost:8182/graphs/newdb/tp/gremlin?script=getDegreeCollaboration(20,10)&load=[anphabe]
+def getDegreeCollaboration(company_tid, limit){
+	limit--;
+	if(limit == -1){
+		g.idx("company_tid")[[company_tid:company_tid]].in('works').out('gets').degree_tid.groupCount.cap.orderMap(T.decr);
+	} else {
+		g.idx("company_tid")[[company_tid:company_tid]].in('works').out('gets').degree_tid.groupCount.cap.orderMap(T.decr)[0..limit];
+	}
+}
+
+//http://localhost:8182/graphs/networkdb/tp/gremlin?script=getPreviousWork(17007,10000)&load=[anphabe]
+def getPreviousWork(company_tid, limit){
+	limit--;
+	if(limit == -1){
+		g.idx("company_tid")[[company_tid:company_tid]].inE("works").as("c").outV().outE("works").except("c").filter({e,m->m.get("c").getProperty("periodfrom")>=e.getProperty("periodto")}).inV().company_tid.groupCount.cap.orderMap(T.decr);
+	} else {
+		g.idx("company_tid")[[company_tid:company_tid]].inE("works").as("c").outV().outE("works").except("c").filter({e,m->m.get("c").getProperty("periodfrom")>=e.getProperty("periodto")}).inV().company_tid.groupCount.cap.orderMap(T.decr)[0..limit];
+	}
+}
+
+//http://localhost:8182/graphs/networkdb/tp/gremlin?script=getNextWork(17007,10000)&load=[anphabe]
+def getNextWork(company_tid, limit){
+	limit--;
+	if(limit == -1){
+		g.idx("company_tid")[[company_tid:company_tid]].inE("works").has("current_work",0).as("c").outV().outE("works").except("c").filter({e,m->m.get("c").getProperty("periodto")<=e.getProperty("periodfrom")}).inV().company_tid.groupCount.cap.orderMap(T.decr);
+	} else {
+		g.idx("company_tid")[[company_tid:company_tid]].inE("works").has("current_work",0).as("c").outV().outE("works").except("c").filter({e,m->m.get("c").getProperty("periodto")<=e.getProperty("periodfrom")}).inV().company_tid.groupCount.cap.orderMap(T.decr)[0..limit];
+	}
+}
+
+//http://localhost:8182/graphs/networkdb/tp/gremlin?script=getFriendsCollaboration(773,2,1000)&load=[anphabe]
+//http://localhost:8182/graphs/newdb/tp/gremlin?script=getFriendsCollaboration(1,2,10000)&load=[anphabe]
+//bt 4
+def getFriendsCollaboration(uid, direct, limit){
+	limit--;
+	l1=[];
+	l2=[];
+	if(direct == 2) {
+		g.idx("uid")[[uid:uid]].both('knows').uid.fill(l1);
+		g.idx("uid")[[uid:uid]].as('x').both('knows').as('y').both('knows').except('x').except('y').dedup.uid.fill(l2);
+	} else {
+		g.idx("uid")[[uid:uid]].in('knows').uid.fill(l1);
+		g.idx("uid")[[uid:uid]].as('x').out('knows').as('y').out('knows').except('x').except('y').dedup.uid.fill(l2);
+	}
+
+	l2[0..100000].removeAll(l1);	//tinh lai tham so chan tren nay
+	
+	if(limit == -1) {
+		return l2;
+	} else {
+		return l2[0..limit];
+	}
+}
+
+
+//http://localhost:8182/graphs/networkdb/tp/gremlin?script=getFriendSameSchool(183,1000)&load=[anphabe]
+//http://localhost:8182/graphs/newdb/tp/gremlin?script=getFriendSameSchool(1,1000)&load=[anphabe]
+def getFriendSameSchool(uid, limit){
+	limit--;
+	if(limit == -1) {
+		g.idx("uid")[[uid:uid]].outE("learns").as("c").inV().inE("learns").except("c").filter({e,m->m.get("c").getProperty("fromyear")==e.getProperty("fromyear")}).outV().uid.groupCount.cap.orderMap(T.decr);
+	} else {
+		g.idx("uid")[[uid:uid]].outE("learns").as("c").inV().inE("learns").except("c").filter({e,m->m.get("c").getProperty("fromyear")==e.getProperty("fromyear")}).outV().uid.groupCount.cap.orderMap(T.decr)[0..limit];
+	}
+}
+
+
+//http://localhost:8182/graphs/newdb/tp/gremlin?script=getFriendSameCompany(1,1000)&load=[anphabe]
+//http://www.onlineconversion.com/unix_time.htm
+def getFriendSameCompany(uid, limit){
+	limit--;
+	if(limit == -1) {
+		g.idx("uid")[[uid:uid]].outE("works").as("c").inV().inE("works").except("c").filter({e,m->(m.get("c").getProperty("periodfrom")/31536000).toInteger() == (e.getProperty("periodfrom")/31536000).toInteger()}).outV().uid.groupCount.cap.orderMap(T.decr);
+	} else {
+		g.idx("uid")[[uid:uid]].outE("works").as("c").inV().inE("works").except("c").filter({e,m->(m.get("c").getProperty("periodfrom")/31536000).toInteger() == (e.getProperty("periodfrom")/31536000).toInteger()}).outV().uid.groupCount.cap.orderMap(T.decr)[0..limit];
+	}
+}
