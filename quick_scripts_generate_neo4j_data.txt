@@ -1,0 +1,44 @@
+--- on m1 ---
+mysql -uanphabe -hdb -p --database=anphabe --execute='SELECT `a` as `uid:int:uid` FROM `network` GROUP BY `a`  UNION  SELECT `b` as `uid:int:uid` FROM `network` GROUP BY `b` ;' > /home/tanbt/network_uid.csv
+mysql -uanphabe -hdb -p --database=anphabe --execute='SELECT `a` as `uid:int:uid`, `b` as `uid:int:uid`, `relationship_type` as `type`, distance, direct, calculate, deleted, changed  FROM `network`;' > /home/tanbt/network_edge.csv 
+
+
+--- on local (sudo) ---
+export M2_HOME=/home/tanbt/etc/apache-maven-3.1.1
+export M2=$M2_HOME/bin 
+export PATH=$M2:$PATH 
+export JAVA_HOME=/usr/lib/jvm/java-7-oracle
+
+//check java -version
+
+scp -P 6879 tanbt@m1:/home/tanbt/network_uid.csv /home/tanbt/
+scp -P 6879 tanbt@m1:/home/tanbt/network_edge.csv /home/tanbt/
+
+mv /home/tanbt/network_uid.csv /home/tanbt/src/batch-import-master/sample/
+mv /home/tanbt/network_edge.csv /home/tanbt/src/batch-import-master/sample/
+
+rm -rf /home/tanbt/neo4jdbs/anphabe_stag_db -R
+mkdir /home/tanbt/neo4jdbs/anphabe_stag_db -p
+
+cd /home/tanbt/src/batch-import-master/
+sample/run.sh
+
+cd /home/tanbt/neo4jdbs
+tar -zcvf anphabe_stag_db.tar.gz anphabe_stag_db
+scp -P 6879 anphabe_stag_db.tar.gz tanbt@m1:/home/tanbt/
+
+--- on m1 ---
+cd /home/tanbt
+sudo tar -zxvf anphabe_stag_db.tar.gz
+mv anphabe_stag_db anphabe_db
+
+sudo service rexster stop
+cd /vault/var/neo4j/
+
+sudo rm -rf anphabe_db -R
+
+sudo mv /home/tanbt/anphabe_db/ .
+sudo chown rexster:root /vault/var/neo4j/anphabe_db/ -R
+sudo chmod 774 /vault/var/neo4j/anphabe_db/ -R
+
+sudo service rexster start
