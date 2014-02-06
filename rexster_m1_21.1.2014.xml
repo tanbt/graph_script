@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rexster>
+    <http>
+        <server-port>8182</server-port>
+        <server-host>0.0.0.0</server-host>
+        <base-uri>http://192.168.1.1</base-uri>
+        <web-root>public</web-root>
+        <character-set>UTF-8</character-set>
+        <enable-jmx>false</enable-jmx>
+        <enable-doghouse>true</enable-doghouse>
+        <max-post-size>2097152</max-post-size>
+        <max-header-size>8192</max-header-size>
+        <upload-timeout-millis>30000</upload-timeout-millis>
+        <thread-pool>
+            <worker>
+                <core-size>32</core-size>
+                <max-size>128</max-size>
+            </worker>
+            <kernal>
+                <core-size>16</core-size>
+                <max-size>32</max-size>
+            </kernal>
+        </thread-pool>
+        <io-strategy>leader-follower</io-strategy>
+    </http>
+    <rexpro>
+        <server-port>8184</server-port>
+        <server-host>0.0.0.0</server-host>
+        <session-max-idle>1790000</session-max-idle>
+        <session-check-interval>3000000</session-check-interval>
+        <connection-max-idle>180000</connection-max-idle>
+        <connection-check-interval>3000000</connection-check-interval>
+        <enable-jmx>false</enable-jmx>
+        <thread-pool>
+            <worker>
+                <core-size>32</core-size>
+                <max-size>64</max-size>
+            </worker>
+            <kernal>
+                <core-size>16</core-size>
+                <max-size>32</max-size>
+            </kernal>
+        </thread-pool>
+        <io-strategy>leader-follower</io-strategy>
+    </rexpro>
+    <shutdown-port>8183</shutdown-port>
+    <shutdown-host>127.0.0.1</shutdown-host>
+    <script-engines>
+
+        <script-engine>
+            <name>gremlin-groovy</name>
+            <reset-threshold>-1</reset-threshold>
+            <init-scripts>config/init.groovy</init-scripts>
+            <imports>com.tinkerpop.rexster.client.*</imports>
+            <static-imports>java.lang.Math.PI</static-imports>
+        </script-engine>
+
+
+    </script-engines>
+    <security>
+        <authentication>
+            <type>none</type>
+            <configuration>
+                <users>
+                    <user>
+                        <username>rexster</username>
+                        <password>rexsterpassword</password>
+                    </user>
+                </users>
+            </configuration>
+        </authentication>
+    </security>
+    <metrics>
+        <reporter>
+            <type>jmx</type>
+        </reporter>
+        <reporter>
+            <type>http</type>
+        </reporter>
+        <reporter>
+            <type>console</type>
+            <properties>
+                <rates-time-unit>SECONDS</rates-time-unit>
+                <duration-time-unit>SECONDS</duration-time-unit>
+                <report-period>10</report-period>
+                <report-time-unit>MINUTES</report-time-unit>
+                <includes>http.rest.*</includes>
+                <excludes>http.rest.*.delete</excludes>
+            </properties>
+        </reporter>
+    </metrics>
+    <graphs>
+
+
+        <graph>
+		<graph-enabled>true</graph-enabled> 
+		<graph-name>anphabe_db</graph-name> 
+		<graph-type>neo4jgraph</graph-type> 
+		<graph-location>/vault/var/neo4j/anphabe_db</graph-location> 
+		<graph-high-availability>true</graph-high-availability> 	
+            <properties>
+                <!-- Memory mapped I/O settings -->
+                <!-- For high traversal speed it is important to have the nodestore.db and relationshipstore.db files. -->
+                <neostore.nodestore.db.mapped_memory>285M</neostore.nodestore.db.mapped_memory>
+                <neostore.relationshipstore.db.mapped_memory>285M</neostore.relationshipstore.db.mapped_memory>
+                <neostore.propertystore.db.mapped_memory>100M</neostore.propertystore.db.mapped_memory>
+                <neostore.propertystore.db.strings.mapped_memory>100M</neostore.propertystore.db.strings.mapped_memory>
+                <neostore.propertystore.db.arrays.mapped_memory>10M</neostore.propertystore.db.arrays.mapped_memory>
+                <neostore.propertystore.db.index.mapped_memory>10M</neostore.propertystore.db.index.mapped_memory>
+                <neostore.propertystore.db.index.keys.mapped_memory>10M
+                </neostore.propertystore.db.index.keys.mapped_memory>
+
+                <!-- Cache settings  -->
+                <!-- use adaptive caches YES|NO. Let Neo try make best use of available heap.  -->
+                <use_adaptive_cache>YES</use_adaptive_cache>
+
+                <!-- heap usage/max heap size ratio. Neo will increase caches while ratio
+                     is less and decrease if greater. Default 0.77 seems to be a good over
+                     all ratio of heap usage to avoid GC trashing. Larger heaps may allow for
+                     a higher ratio while tiny heaps may need even less. -->
+                <adaptive_cache_heap_ratio>0.77</adaptive_cache_heap_ratio>
+
+                <!-- how aggressive Neo will decrease caches once heap ratio reached  -->
+                <adaptive_cache_manager_decrease_ratio>1.15</adaptive_cache_manager_decrease_ratio>
+
+                <!-- how aggressive Neo will increase caches if ratio isn't yet reached  -->
+                <adaptive_cache_manager_increase_ratio>1.1</adaptive_cache_manager_increase_ratio>
+
+                <!-- if no requests are made to Neo this is the amount of time in ms Neo will wait
+                     before it checks the heap usage and adapts the caches if needed -->
+                <adaptive_cache_worker_sleep_time>3000</adaptive_cache_worker_sleep_time>
+
+                <!-- minimum size (number of nodes) of node cache. If adaptive cache is in use
+                     node cache will not be decreased under this value -->
+                <min_node_cache_size>0</min_node_cache_size>
+
+                <!--  minimum size (number of relationships) of relationship cache. If adaptive
+                      cache is in use relationship cache will not be decreased under this value -->
+                <min_relationship_cache_size>0</min_relationship_cache_size>
+
+                <!-- maximum size (number of nodes) of node cache. If adaptive cache is not in
+                     use the node cache will not be increased above this value -->
+                <max_node_cache_size>3500</max_node_cache_size>
+
+                <!-- maximum size (number of relationship) of node cache. If adaptive cache is
+                     not in use the relationship cache will not be increased above this value  -->
+                <max_relationship_cache_size>3500</max_relationship_cache_size>
+
+		<ha.machine_id>1</ha.machine_id> 
+		<ha.server>127.0.0.1:6001</ha.server> 
+		<ha.zoo_keeper_servers>127.0.0.1:5001</ha.zoo_keeper_servers> 
+		<ha.initial_hosts>127.0.0.1:5001</ha.initial_hosts> 
+		<ha.cluster_server>127.0.0.1:5001</ha.cluster_server> 
+		<online_backup_enabled>true</online_backup_enabled> 
+		<online_backup_server>127.0.0.1:6362</online_backup_server> 	
+			</properties> 
+				<extensions> 
+		            		<allows> 
+            					<allow>tp:gremlin</allow> 
+		            		</allows> 
+           				<extension> 
+           					<namespace>tp</namespace> 
+		           			<name>gremlin</name> 
+		           			<configuration> 
+           						<scripts>/usr/local/mio/rexster-server-2.4.0/anphabe_script</scripts> 
+           						<allow-client-script>true</allow-client-script> 
+		           				<cache-scripts>true</cache-scripts> 
+           					</configuration> 
+		           		</extension> 
+		           	</extensions>
+		</graph> 
+
+	       <graph>
+                <graph-enabled>true</graph-enabled>
+                <graph-name>anphabe_stag_db</graph-name>
+                <graph-type>neo4jgraph</graph-type>
+                <graph-location>/vault/var/neo4j/anphabe_stag_db</graph-location>
+                <graph-high-availability>true</graph-high-availability>
+            <properties>
+                <!-- Memory mapped I/O settings -->
+                <!-- For high traversal speed it is important to have the nodestore.db and relationshipstore.db files. -->
+                <neostore.nodestore.db.mapped_memory>285M</neostore.nodestore.db.mapped_memory>
+                <neostore.relationshipstore.db.mapped_memory>285M</neostore.relationshipstore.db.mapped_memory>
+                <neostore.propertystore.db.mapped_memory>100M</neostore.propertystore.db.mapped_memory>
+                <neostore.propertystore.db.strings.mapped_memory>100M</neostore.propertystore.db.strings.mapped_memory>
+                <neostore.propertystore.db.arrays.mapped_memory>10M</neostore.propertystore.db.arrays.mapped_memory>
+                <neostore.propertystore.db.index.mapped_memory>10M</neostore.propertystore.db.index.mapped_memory>
+                <neostore.propertystore.db.index.keys.mapped_memory>10M
+                </neostore.propertystore.db.index.keys.mapped_memory>
+
+                <!-- Cache settings  -->
+                <!-- use adaptive caches YES|NO. Let Neo try make best use of available heap.  -->
+                <use_adaptive_cache>YES</use_adaptive_cache>
+
+                <!-- heap usage/max heap size ratio. Neo will increase caches while ratio
+                     is less and decrease if greater. Default 0.77 seems to be a good over
+                     all ratio of heap usage to avoid GC trashing. Larger heaps may allow for
+                     a higher ratio while tiny heaps may need even less. -->
+                <adaptive_cache_heap_ratio>0.77</adaptive_cache_heap_ratio>
+
+                <!-- how aggressive Neo will decrease caches once heap ratio reached  -->
+                <adaptive_cache_manager_decrease_ratio>1.15</adaptive_cache_manager_decrease_ratio>
+
+                <!-- how aggressive Neo will increase caches if ratio isn't yet reached  -->
+                <adaptive_cache_manager_increase_ratio>1.1</adaptive_cache_manager_increase_ratio>
+
+                <!-- if no requests are made to Neo this is the amount of time in ms Neo will wait
+                     before it checks the heap usage and adapts the caches if needed -->
+                <adaptive_cache_worker_sleep_time>3000</adaptive_cache_worker_sleep_time>
+                <!-- minimum size (number of nodes) of node cache. If adaptive cache is in use
+                     node cache will not be decreased under this value -->
+                <min_node_cache_size>0</min_node_cache_size>
+
+                <!--  minimum size (number of relationships) of relationship cache. If adaptive
+                      cache is in use relationship cache will not be decreased under this value -->
+                <min_relationship_cache_size>0</min_relationship_cache_size>
+
+                <!-- maximum size (number of nodes) of node cache. If adaptive cache is not in
+                     use the node cache will not be increased above this value -->
+                <max_node_cache_size>3500</max_node_cache_size>
+
+                <!-- maximum size (number of relationship) of node cache. If adaptive cache is
+                     not in use the relationship cache will not be increased above this value  -->
+                <max_relationship_cache_size>3500</max_relationship_cache_size>
+
+                <ha.machine_id>2</ha.machine_id>
+                <ha.server>127.0.0.1:6002</ha.server>
+                <ha.zoo_keeper_servers>127.0.0.1:5002</ha.zoo_keeper_servers>
+                <ha.initial_hosts>127.0.0.1:5002</ha.initial_hosts>
+                <ha.cluster_server>127.0.0.1:5002</ha.cluster_server>
+                <online_backup_enabled>true</online_backup_enabled>
+                <online_backup_server>127.0.0.1:6363</online_backup_server>
+                        </properties>
+                                <extensions>
+                                        <allows>
+                                                <allow>tp:gremlin</allow>
+                                        </allows>
+                                        <extension>
+                                                <namespace>tp</namespace>
+                                                <name>gremlin</name>
+                                                <configuration>
+                                                        <scripts>/usr/local/mio/rexster-server-2.4.0/anphabe_script</scripts>
+                                                        <allow-client-script>true</allow-client-script>
+                                                        <cache-scripts>true</cache-scripts>
+                                                </configuration>
+					</extension>
+                                </extensions>
+                </graph>
+
+
+
+	</graphs>
+	<dependency> 
+		<groupId>org.neo4j</groupId> 
+		<artifactId>neo4j-ha</artifactId> 
+		<version>1.9.2</version> 
+	</dependency> 
+	<dependency> 
+		<groupId>org.neo4j</groupId> 
+		<artifactId>neo4j-management</artifactId> 
+		<version>1.9.2</version> 
+	</dependency> 		
+
+</rexster>
